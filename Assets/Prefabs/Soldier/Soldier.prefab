@@ -641,7 +641,7 @@ GameObject:
   - component: {fileID: 4324037518315475085}
   - component: {fileID: 4324037518307704665}
   - component: {fileID: 951731771}
-  - component: {fileID: 9032560624084701753}
+  - component: {fileID: -7740449684718645239}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Untagged
@@ -694,7 +694,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -706,7 +706,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &9032560624084701753
+--- !u!114 &-7740449684718645239
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -715,7 +715,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4324037518314982637}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cadad4fbe502bb4cac5d912c11ff335, type: 3}
+  m_Script: {fileID: 11500000, guid: aea17bc0aaca0df44bdd068ebf9e1ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
