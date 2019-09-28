@@ -97,7 +97,11 @@ public class CameraControl : MonoBehaviour
             selectionBox.anchoredPosition = boxRect.position;
             selectionBox.sizeDelta = boxRect.size;
             UpdateSelecting();
-        }  
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            GiveCommands();
+        }
     }
 
     /// <summary>
@@ -141,5 +145,36 @@ public class CameraControl : MonoBehaviour
     {
         return point.x >= rect.position.x && point.x <= (rect.position.x + rect.size.x) &&
             point.y >= rect.position.y && point.y <= (rect.position.y + rect.size.y);
+    }
+
+    Ray ray;
+    RaycastHit rayHit;
+    [SerializeField]
+    LayerMask commandLayerMask = - 1;
+    void GiveCommands()
+    {
+        ray = camera.ViewportPointToRay(mousePosScreen);
+        if(Physics.Raycast(ray, out rayHit ,1000, commandLayerMask))
+        {
+            object commandData = null;
+            if(rayHit.collider is TerrainCollider)
+            {
+                //Debug.Log("Terrain: " + rayHit.point.ToString());
+                commandData = rayHit.point;
+            }
+            else
+            {
+                commandData = rayHit.collider.gameObject.GetComponent<Unit>();
+            }
+            GiveCommands(commandData);
+        }
+    }
+
+    void GiveCommands(object dataCommand)
+    {
+        foreach(Unit unit in selectedUnits)
+        {
+            unit.SendMessage("Command", dataCommand, SendMessageOptions.DontRequireReceiver);
+        }
     }
 }
