@@ -12,12 +12,14 @@ public class HealthBar : MonoBehaviour
 
     Slider slider;
     Unit unit;
+    Transform parent;
     Transform cameraTransform;
 
 
     private void Awake()
     {
         slider = GetComponent<Slider>();
+        parent = transform.parent;
         unit = GetComponentInParent<Unit>();
         var canvas = GameObject.FindGameObjectWithTag(HP_CANVAS);
         if (canvas) transform.SetParent(canvas.transform);
@@ -26,14 +28,15 @@ public class HealthBar : MonoBehaviour
 
     private void Update()
     {
-        if(!unit)
+        if(!parent)
         {
             Destroy(gameObject);
             return;
         }
+        if(unit)
+            slider.value = unit.HealthPercent;
 
-        slider.value = unit.HealthPercent;
-        transform.position = unit.transform.position + offset;
+        transform.position = parent.position + offset;
         transform.LookAt(cameraTransform);
         var rotation = transform.localEulerAngles;
         rotation.y = 180;
