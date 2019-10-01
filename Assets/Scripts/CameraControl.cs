@@ -23,6 +23,8 @@ public class CameraControl : MonoBehaviour
     Rect selectionRect, boxRect;
 
     List<ISelectable> selectedUnits = new List<ISelectable>();
+    BuildingPlacer placer;
+    GameObject buildingPrefabToSpawn;
 
     private void Awake()
     {
@@ -34,11 +36,18 @@ public class CameraControl : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        placer = GameObject.FindObjectOfType<BuildingPlacer>();
+        placer.gameObject.SetActive(false);
+    }
+
     private void Update()
     {
         UpdateMovement();
         UpdateZoom();
         UpdateClicks();
+        UpdatePlacer();
     }
 
 
@@ -86,6 +95,7 @@ public class CameraControl : MonoBehaviour
         {
             selectionBox.gameObject.SetActive(true);
             selectionRect.position = mousePos;
+            TryBuild();
         }
         if (Input.GetMouseButtonUp(0))
         {
@@ -104,8 +114,11 @@ public class CameraControl : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             GiveCommands();
+            buildingPrefabToSpawn = null;
         }
     }
+
+    
 
     /// <summary>
     /// Convert rect size to absolute value
@@ -155,6 +168,10 @@ public class CameraControl : MonoBehaviour
     RaycastHit rayHit;
     [SerializeField]
     LayerMask commandLayerMask = - 1;
+    [SerializeField]
+    LayerMask buildingLayerMask = 0;
+
+
     void GiveCommands()
     {
         ray = camera.ViewportPointToRay(mousePosScreen);
@@ -185,5 +202,37 @@ public class CameraControl : MonoBehaviour
     public static void SpawnUnits(GameObject prefab)
     {
         cameraControl.GiveCommands(prefab, "Spawn");
+    }
+
+    public static void SpawnBulding(GameObject prefab)
+    {
+        cameraControl.buildingPrefabToSpawn = prefab;
+        
+    }
+
+    void UpdatePlacer()
+    {
+        placer.gameObject.SetActive(buildingPrefabToSpawn);
+        if(placer.gameObject.activeInHierarchy)
+        {
+            ray = camera.ViewportPointToRay(mousePosScreen);
+            if (Physics.Raycast(ray, out rayHit, 1000, buildingLayerMask))
+            {
+                placer.SetPosition(rayHit.point);
+            }
+        }
+
+    }
+
+    void TryBuild()
+    {
+        if(buildingPrefabToSpawn && placer && placer.isActiveAndEnabled && placer.CanBuildHere())
+        {
+            var buyable = buildingPrefabToSpawn.GetComponent<Buyable>();
+            if (!buyable || !Money.TrySpendMoney(buyable.cost)) return;
+
+            var unit = Instantiate(buildingPrefabToSpawn, placer.transform.position, placer.transform.rotation);
+            
+        }
     }
 }
